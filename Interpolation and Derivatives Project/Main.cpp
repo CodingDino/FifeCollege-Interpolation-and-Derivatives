@@ -18,7 +18,14 @@ int main()
 	ballSprite.setOrigin(ballTexture.getSize().x / 2, ballTexture.getSize().y / 2);
 
 	// Interpolation data
+	sf::Vector2f begin = ballPosition;
 	sf::Vector2f end = ballPosition;
+	sf::Vector2f change = end - begin;
+	float duration = 1.0f;
+	float time = 0.0f;
+
+	// Game clock
+	sf::Clock gameClock;
 
 	// ---------------------------------------------------
 	// Game Loop
@@ -49,7 +56,11 @@ int main()
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
 			// left click...
+			begin = ballPosition;
 			end = sf::Vector2f(sf::Mouse::getPosition(window));
+			change = end - begin;
+
+			time = 0;
 		}
 
 
@@ -57,8 +68,27 @@ int main()
 		// Update
 		// ---------------------------------------------------
 
-		// Instant movement
-		ballPosition = end;
+		// Get time passed this frame
+		sf::Time frameTime = gameClock.restart();
+		float deltaTime = frameTime.asSeconds();
+
+		// Interpolate over time
+		if (time < duration)
+		{
+			// Linear Interpolation
+			sf::Vector2f k1 = change / duration;
+			sf::Vector2f k2 = begin;
+			ballPosition = k1 * time + k2;
+
+			time += deltaTime;
+		}
+		else
+		{
+			// We finished the duration, move us instantly.
+			// Instant movement
+			ballPosition = end;
+
+		}
 
 		// Update sprite to correct position
 		ballSprite.setPosition(ballPosition);
