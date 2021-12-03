@@ -76,9 +76,15 @@ int main()
 		if (time < duration)
 		{
 			// Linear Interpolation
-			sf::Vector2f k1 = change / duration;
-			sf::Vector2f k2 = begin;
-			ballPosition = k1 * time + k2;
+			//sf::Vector2f k1 = change / duration;
+			//sf::Vector2f k2 = begin;
+			//ballPosition = k1 * time + k2;
+
+			// Quad Ease In
+			sf::Vector2f k1 = change / (duration * duration);
+			sf::Vector2f k2 = sf::Vector2f(0.0f, 0.0f);
+			sf::Vector2f k3 = begin;
+			ballPosition = k1 * time * time + k2 * time + k3;
 
 			time += deltaTime;
 		}
