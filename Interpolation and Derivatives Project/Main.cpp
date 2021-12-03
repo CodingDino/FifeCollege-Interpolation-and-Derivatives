@@ -17,6 +17,9 @@ int main()
 	ballSprite.setPosition(ballPosition);
 	ballSprite.setOrigin(ballTexture.getSize().x / 2, ballTexture.getSize().y / 2);
 
+	// Interpolation data
+	sf::Vector2f end = ballPosition;
+
 	// ---------------------------------------------------
 	// Game Loop
 	// ---------------------------------------------------
@@ -42,11 +45,23 @@ int main()
 			}
 		}
 
+		// Mouse press
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			// left click...
+			end = sf::Vector2f(sf::Mouse::getPosition(window));
+		}
+
 
 		// ---------------------------------------------------
 		// Update
 		// ---------------------------------------------------
 
+		// Instant movement
+		ballPosition = end;
+
+		// Update sprite to correct position
+		ballSprite.setPosition(ballPosition);
 
 		// ---------------------------------------------------
 		// Draw
