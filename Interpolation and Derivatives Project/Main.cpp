@@ -1,10 +1,13 @@
 #include <SFML/Graphics.hpp>
+#include "VectorHelper.h"
+
+
 
 int main()
 {
 
 	// Window Setup
-	sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Interpolation Example", sf::Style::Titlebar);
+	sf::RenderWindow window(sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "Interpolation Example");
 
 	// Load texture
 	sf::Texture ballTexture;
@@ -18,10 +21,14 @@ int main()
 	ballSprite.setOrigin(ballTexture.getSize().x / 2, ballTexture.getSize().y / 2);
 
 	// Interpolation data
-	sf::Vector2f begin = ballPosition;
+	sf::Vector2f begin = ballPosition;	//b
 	sf::Vector2f end = ballPosition;
-	sf::Vector2f change = end - begin;
-	float duration = 1.0f;
+	sf::Vector2f change = end - begin;	//c
+	sf::Vector2f direction = sf::Vector2f(0,0);
+	float duration = 1.0f;				//d
+	float speed = 100.0f;
+
+
 	float time = 0.0f;
 
 	// Game clock
@@ -59,6 +66,7 @@ int main()
 			begin = ballPosition;
 			end = sf::Vector2f(sf::Mouse::getPosition(window));
 			change = end - begin;
+			direction = VectorNormalize(change);
 
 			time = 0;
 		}
@@ -72,6 +80,8 @@ int main()
 		sf::Time frameTime = gameClock.restart();
 		float deltaTime = frameTime.asSeconds();
 
+		ballPosition += speed * direction * deltaTime;
+
 		// Interpolate over time
 		if (time < duration)
 		{
@@ -80,11 +90,16 @@ int main()
 			//sf::Vector2f k2 = begin;
 			//ballPosition = k1 * time + k2;
 
+			//ballPosition = (change / duration) * time + begin;
+
 			// Quad Ease In
 			sf::Vector2f k1 = change / (duration * duration);
-			sf::Vector2f k2 = sf::Vector2f(0.0f, 0.0f);
+			sf::Vector2f k2 = sf::Vector2f(0,0);
 			sf::Vector2f k3 = begin;
-			ballPosition = k1 * time * time + k2 * time + k3;
+			//ballPosition = k1 * time * time + k2 * time + k3;
+
+			//ballPosition = (change / (duration * duration)) * (time * time) + begin;
+
 
 			time += deltaTime;
 		}
@@ -92,7 +107,7 @@ int main()
 		{
 			// We finished the duration, move us instantly.
 			// Instant movement
-			ballPosition = end;
+			//ballPosition = end;
 
 		}
 
